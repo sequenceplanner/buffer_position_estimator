@@ -1,13 +1,11 @@
 use r2r::geometry_msgs::msg::TransformStamped;
 use r2r::tf2_msgs::msg::TFMessage;
 use r2r::{Context, Node};
-use r2r::std_msgs::msg::Bool;
-use r2r::std_srvs::srv::Trigger;
 use std::sync::{Arc, Mutex};
 //use std::time::Duration;
 use futures::stream::StreamExt;
 use futures::future;
-use cgmath::{Deg, Rad, Euler, Quaternion, Vector3};
+use cgmath::{Deg, Rad, Euler, Quaternion};
 
 #[derive(Clone, Default)]
 struct State {
@@ -25,8 +23,8 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
     let ros_ctx = Context::create()?;
     let mut node = Node::create(ros_ctx, "buffer_position_estimator", "")?;
 
-    let tf_sub = node.subscribe::<TFMessage>("/tf")?;
-    let tf_pub = node.create_publisher::<TFMessage>("/tf")?;
+    let tf_sub = node.subscribe::<TFMessage>("/tf", r2r::QosProfile::default())?;
+    let tf_pub = node.create_publisher::<TFMessage>("/tf", r2r::QosProfile::default())?;
 
     let state = Arc::new(Mutex::new(State::default()));
 
